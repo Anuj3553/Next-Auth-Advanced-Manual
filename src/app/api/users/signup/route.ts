@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
         console.log(savedUser)
 
         const userId = savedUser._id
+        
         // Send verification email
         await sendEmail({ email, emailType: "VERIFY", userId: userId })
 

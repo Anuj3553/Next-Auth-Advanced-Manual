@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
 
         // Generate a reset password token (hashed user ID in this case)
         const hashedToken = await bcryptjs.hash(user._id.toString(), 10);
-        console.log("Reset Email : ", hashedToken)
 
         // Save the reset token and expiry to the user model
         user.forgotPasswordToken = hashedToken;

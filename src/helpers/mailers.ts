@@ -14,9 +14,7 @@ export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) =
         // TODO: configure mail for usage
 
         const hashedToken = await bcryptjs.hash(userId.toString(), 10)
-        console.log("Send Email : ", hashedToken)
 
-        // const hashedToken = "abc123"
         console.log("MAIL", userId);
         console.log("EMAIL TYPE", emailType);
         console.log(typeof emailType);

@@ -3,11 +3,18 @@ import nodemailer from 'nodemailer'
 import bcryptjs from 'bcryptjs'
 
 
-export const sendEmail = async ({ email, emailType, userId }) => {
+interface SendEmailParams {
+    email: string;
+    emailType: 'VERIFY' | 'RESET';
+    userId: string;
+}
+
+export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) => {
     try {
         // TODO: configure mail for usage
 
         const hashedToken = await bcryptjs.hash(userId.toString(), 10)
+        console.log("Send Email : ", hashedToken)
 
         // const hashedToken = "abc123"
         console.log("MAIL", userId);
@@ -47,15 +54,19 @@ export const sendEmail = async ({ email, emailType, userId }) => {
             from: 'anujverma3553@gmail.com', // sender address
             to: email, // list of receivers
             subject: emailType === 'VERIFY' ? "Verify your email" : "Reset your password",
-            html: `<p>Click <a href="${process.env.DOMAIN} / verifyemail?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "Verify your email" : "Reset your password"} or copy and paste the link below in your browser.
-            <br> ${process.env.DOMAIN}/verifyemail?token=${hashedToken}
+            html: `<p>Click <a href="${process.env.DOMAIN}/${emailType === 'VERIFY' ? 'verifyemail' : 'resetpassword'}?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "Verify your email" : "Reset your password"} or copy and paste the link below in your browser.
+            <br> ${process.env.DOMAIN}/${emailType === 'VERIFY' ? 'verifyemail' : 'resetpassword'}?token=${hashedToken}
             </p>`,
-        }
+        };
 
         const mailResponse = await transport.sendMail(mailOptions)
         return mailResponse
     }
-    catch (error: any) {
-        throw new Error(error.message)
+    catch (error: unknown) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
     }
 }
